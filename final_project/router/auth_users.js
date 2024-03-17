@@ -69,7 +69,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
         let reviewText = req.body.reviewText;
         if (username && reviewText) {
             book.reviews[username] = reviewText;
-            res.status(200).json({message: "Review added successfully"});
+            res.status(200).json({message: "Review added successfully for " + username});
         } else {
             res.status(400).json({message: "Username '" + username + "' and Review Content are required."});
         }
@@ -89,7 +89,7 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
     if (book) {
         if (username) {
             delete book.reviews[username];
-            res.status(200).json({message: "Review deleted successfully"});
+            res.status(200).json({message: "Review deleted successfully for " + username});
         } else {
             res.status(400).json({message: "Review was not found for username."});
         }
