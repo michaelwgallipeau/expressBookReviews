@@ -46,6 +46,30 @@ function getBooksByAuthor(author) {
     });
 }
 
+function getBooksByTitle(title) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+
+            let matchingBooks = [];
+
+            // Iterate through object keys
+            Object.keys(books).forEach(key => {
+                let book = books[key];
+                if (book.title.toLowerCase() === title.toLowerCase()) {
+                    matchingBooks.push(book);
+                }
+            });
+        
+            if (matchingBooks.length > 0) {
+                resolve(matchingBooks);
+            } else {
+                reject(Error('No books found for the specified title.'));
+            }             
+        }, 100); 
+        
+    });
+}
+
 public_users.post("/register", (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -91,31 +115,20 @@ public_users.get('/isbn/:isbn',async function (req, res) {
 public_users.get('/author/:author',async function (req, res) {
     try {
         const books = await getBooksByAuthor(req.params.author);
-            res.send(JSON.stringify(books, null, 4));
+        res.send(JSON.stringify(books, null, 4));
     } catch (error) {
         res.status(500).json({message: "Failed to retrieve book list", error: error.message});
     }
 });
 
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
-    const title = req.params.title;
-    let matchingBooks = [];
-
-    // Iterate through object keys
-    Object.keys(books).forEach(key => {
-        let book = books[key];
-        if (book.title.toLowerCase() === title.toLowerCase()) {
-            matchingBooks.push(book);
-        }
-    });
-
-    if (matchingBooks.length > 0) {
-        res.json(matchingBooks);
-    } else {
-        res.status(404).send('No books found for the specified title.');
+public_users.get('/title/:title',async function (req, res) {
+    try {
+        const books = await getBooksByTitle(req.params.title);
+        res.send(JSON.stringify(books, null, 4));
+    } catch (error) {
+        res.status(500).json({message: "Failed to retrieve book list", error: error.message});
     }
-
 });
 
 //  Get book review
